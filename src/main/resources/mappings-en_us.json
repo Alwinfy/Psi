@@ -1,0 +1,17 @@
+{
+	"names": {
+		"CAD Assembler": "CAD Assembler",
+		"__END": null
+	},
+	"ignore": [
+		"Redstone Dust",
+		"__END"
+	],
+	"paths": {
+		"CAD Assembler": "basics/cad_assembler",
+		"Spell Bullet": "basics/cad_assembler",
+		"__END": null
+	},
+	"file": "rewrite.txt"
+}
+
