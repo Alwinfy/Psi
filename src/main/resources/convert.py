@@ -8,6 +8,7 @@ if len(argv) < 2:
     print("Usage: {} <mappings file> [<output file> [<error file]]".format(argv[0]))
     exit()
 
+# note: `names` maps $(item) names to entry names; `paths` maps entry names to link names
 
 def resolve_file(index, mode, default=None):
     return open(argv[index], mode) if len(argv) > index else default
@@ -19,6 +20,8 @@ errors = []
 
 item_pattern = re_compile(r"(?<!\))\$\(item\)([^$]+)\$\([0r]\)(?!\$)")
 
+entry_pat = re_compile(r"#(\w+)(\+?)(?: from:(\w+))?(?: icon:(\w+))? (.*)")
+
 with open(data["file"], "r") as fin, \
         resolve_file(2, "w", stdout) as out:
     for line in fin:
@@ -26,8 +29,9 @@ with open(data["file"], "r") as fin, \
         if not line.strip():
             print(line, file=out)
             continue
-        if line.startswith("#"):
-            suffix = line[1:].strip()
+        matcher = entry_pat.fullmatch(line)
+        if matcher:
+            suffix = matcher.group(1)
         def item_cb(matcher):
             whole = matcher.group(0)
             phrase = matcher.group(1)
@@ -35,11 +39,11 @@ with open(data["file"], "r") as fin, \
             if phrase not in data["names"]:
                 unknowns.add('    "{}",'.format(phrase))
                 return whole
-            key = data["names"][phrase]
+            key = data["names"][phrase] or phrase
             if key not in data["paths"]:
                 errors.append("'{}' ({}) doesn't have a corresponding entry!".format(phrase, key))
                 return whole
-            if match(r"\.{}\d*\"\s*:".format(suffix), line):
+            if data["paths"][key].endswith(suffix):
                 return whole
             return "$(l:{})$(item){}$(0)$(/l)".format(data["paths"][key], phrase)
         print(sub(item_pattern, item_cb, line), file=out)
