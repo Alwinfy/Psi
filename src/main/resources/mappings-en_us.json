@@ -1,21 +1,23 @@
 {
 	"names": {
-		"CAD Assembler": "CAD Assembler",
-		"Iron CAD Assembly": "Assemblies",
-		"Psidust": "Psidust",
-		"Psimetal": "Psimetal",
-		"Psigem": "Psigem",
-		"Psigems": "Psigem",
-		"Psimetal Tools": "Psimetal Tools",
-		"Assembly": "Assemblies",
-		"Core": "Cores",
-		"Socket": "Sockets",
-		"Battery": "Batteries",
-		"Colorizer": "Colorizers",
-		"Spell Bullet": "Spell Bullet",
-		"Spell Bullets": "Spell Bullet",
-		"Programmer": "Spell Programmer",
-		"Spell Programmer": "Spell Programmer",
+		"CAD Assembler": "basics/cad_assembler",
+		"Programmer": "basics/spell_programmer",
+		"Spell Programmer": "basics/spell_programmer",
+
+		"Psidust": "components/psidust",
+		"Psimetal": "components/psimetal",
+		"Psigem": "components/psigem",
+		"Psigems": "components/psigem",
+		"Assembly": "components/assembly",
+		"Iron CAD Assembly": "components/assembly#iron",
+		"Core": "components/core",
+		"Socket": "components/ocket",
+		"Battery": "components/attery",
+		"Colorizer": "components/colorizer",
+
+		"Spell Bullet": "items/spell_bullet",
+		"Spell Bullets": "items/spell_bullet",
+		"Psimetal Tools": "items/psi_tools",
 		"__END": null
 	},
 	"ignore": [
@@ -23,24 +25,6 @@
 		"this color",
 		"__END"
 	],
-	"paths": {
-		"CAD Assembler": "basics/cad_assembler",
-		"Spell Programmer": "basics/spell_programmer",
-
-		"Spell Bullet": "items/spell_bullet",
-		"Psimetal Tools": "items/psi_tools",
-
-		"Psidust": "components/psidust",
-		"Psimetal": "components/psimetal",
-		"Psigem": "components/psigem",
-		"Ebony & Ivory": "components/end_materials",
-		"Assemblies": "components/assembly",
-		"Cores": "components/core",
-		"Sockets": "components/socket",
-		"Batteries": "components/battery",
-		"Colorizers": "components/colorizer",
-		"__END": null
-	},
 	"file": "rewrite.txt"
 }
 

@@ -39,13 +39,9 @@ with open(data["file"], "r") as fin, \
             if phrase not in data["names"]:
                 unknowns.add('    "{}",'.format(phrase))
                 return whole
-            key = data["names"][phrase] or phrase
-            if key not in data["paths"]:
-                errors.append("'{}' ({}) doesn't have a corresponding entry!".format(phrase, key))
+            if match("/{}(#|\))".format(suffix), data["names"][phrase]):
                 return whole
-            if data["paths"][key].endswith(suffix):
-                return whole
-            return "$(l:{})$(item){}$(0)$(/l)".format(data["paths"][key], phrase)
+            return "$(l:{})$(item){}$(0)$(/l)".format(data["names"][phrase], phrase)
         print(sub(item_pattern, item_cb, line), file=out)
 with resolve_file(3, "w", stderr) as err:
     if unknowns:
