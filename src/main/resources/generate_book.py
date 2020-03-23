@@ -36,6 +36,7 @@ entry_pat = re_compile(r"#(\w+)(\+?)(?: gate:(\w+))?(?: turnin:(\w+))?(?: icon:(
 page_patterns = [
     ("crafting", re_compile(r"@RECIPE\s*\((\w+)\)(?:: (.*))?"),     lambda match: (match.group(2), {"recipe": modpfx + match.group(1)})),
     ("image",    re_compile(r"@IMAGE\s*(B)?\(([\w,]+)\)(?:: (.*))?"),   lambda match: (match.group(3), {"images": [modpfx + imagepath.format(fn) for fn in match.group(2).split(",")], "border": bool(match.group(1))})),
+    ("link",    re_compile(r"@URL\s*\(([^)]+)\)\s*([^:]+)\s*(?:: (.*))?"),   lambda match: (match.group(3), {"url": match.group(1), "link_text": match.group(2)})),
     ("text",     re_compile(".*"),                                  lambda match: (match.group(0), {}))
 ]
 

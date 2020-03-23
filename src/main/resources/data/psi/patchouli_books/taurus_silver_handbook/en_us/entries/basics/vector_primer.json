@@ -4,8 +4,22 @@
   "icon": "psi:vector_ruler",
   "pages": [
     {
+      "type": "link",
+      "text": "psi.book.page.vectorPrimer.0",
+      "url": "https://www.youtube.com/watch?v=fNk_zzaMoSs",
+      "link_text": "3Blue1Brown"
+    },
+    {
       "type": "text",
-      "text": "psi.book.page.vectorPrimer.0"
+      "text": "psi.book.page.vectorPrimer.1"
+    },
+    {
+      "type": "text",
+      "text": "psi.book.page.vectorPrimer.2"
+    },
+    {
+      "type": "text",
+      "text": "psi.book.page.vectorPrimer.3"
     }
   ]
 }

@@ -14,22 +14,19 @@
       "images": [
         "psi:textures/gui/entries/tutorial_5_stats.png"
       ],
-      "border": true
+      "border": false
     },
     {
       "type": "text",
-      "text": "psi.book.page.tutorial5.2",
-      "anchor": "complexity"
+      "text": "psi.book.page.tutorial5.2"
     },
     {
       "type": "text",
-      "text": "psi.book.page.tutorial5.3",
-      "anchor": "potency"
+      "text": "psi.book.page.tutorial5.3"
     },
     {
       "type": "text",
-      "text": "psi.book.page.tutorial5.4",
-      "anchor": "cost"
+      "text": "psi.book.page.tutorial5.4"
     },
     {
       "type": "text",
@@ -37,21 +34,11 @@
     },
     {
       "type": "text",
-      "text": "psi.book.page.tutorial5.6",
-      "anchor": "projection"
+      "text": "psi.book.page.tutorial5.6"
     },
     {
       "type": "text",
-      "text": "psi.book.page.tutorial5.7",
-      "anchor": "bandwidth"
-    },
-    {
-      "type": "text",
-      "text": "psi.book.page.tutorial5.8"
-    },
-    {
-      "type": "text",
-      "text": "psi.book.page.tutorial5.9"
+      "text": "psi.book.page.tutorial5.7"
     }
   ]
 }
