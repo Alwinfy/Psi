@@ -1,7 +1,7 @@
 {
   "name": "psi.book.entry.cadAssembler",
   "category": "basics",
-  "icon": "minecraft:air",
+  "icon": "psi:cad_assembler",
   "pages": [
     {
       "type": "text",

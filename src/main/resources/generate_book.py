@@ -3,11 +3,11 @@
 from sys    import argv, stdin, stderr, stdout
 from json   import dump as dump_json, load as load_json
 from re     import sub, compile as re_compile
-from os     import makedirs
+from os     import makedirs, environ
 
 i18n = False
 bookpfx = None
-lang = "en_us"
+lang = sub("\..*", "", environ.get("LANG", "en_us")).lower()
 modname = None
 basepath = None
 imagepath = "textures/gui/entries/{}.png"
@@ -32,7 +32,7 @@ camelcased = lambda snakecase: sub("_([a-z])", lambda match: match.group(1).uppe
 
 book_pat = re_compile(r"@BOOK\s*\((\w+)\)(?: i18n:(\S+))?(?: icon:(\w+))? ([^;]*)(?:;\s*(.*))?")
 section_pat = re_compile(r"##(\w+) icon:(\w+) ([^;]*)(?:;\s*(.*))?")
-entry_pat = re_compile(r"#(\w+)(\+?)(?: from:(\w+))?(?: icon:(\w+))? (.*)")
+entry_pat = re_compile(r"#(\w+)(\+?)(?: gate:(\w+))?(?: turnin:(\w+))?(?: icon:(\w+))? (.*)")
 page_patterns = [
     ("crafting", re_compile(r"@RECIPE\s*\((\w+)\)(?:: (.*))?"),     lambda match: (match.group(2), {"recipe": modpfx + match.group(1)})),
     ("image",    re_compile(r"@IMAGE\s*(B)?\(([\w,]+)\)(?:: (.*))?"),   lambda match: (match.group(3), {"images": [modpfx + imagepath.format(fn) for fn in match.group(2).split(",")], "border": bool(match.group(1))})),
@@ -41,7 +41,7 @@ page_patterns = [
 
 def langput(langkey, value):
     if bookpfx:
-        langkey = bookpfx + "." + langkey
+        langkey = bookpfx + langkey
         lang_file[langkey] = value
         return langkey
     return value
@@ -58,12 +58,12 @@ with resolve_file(1, "r", stdin) as fin:
     entry_data = None
     for line in fin:
         line = line[:-1] # strip newline
-        if not line.strip():
+        if not line.strip() or line.strip().startswith("//"):
             continue
         if line == "__END__":
             break
-        if line.startswith("@MOD "):
-            modname = line[5:].strip()
+        if line.strip().startswith("@MOD "):
+            modname = line.strip()[5:].strip()
             modpfx = modname + ":"
             continue
         matcher = book_pat.fullmatch(line)
@@ -73,7 +73,7 @@ with resolve_file(1, "r", stdin) as fin:
                 print("E: Found book {} before a modname".format(bookid), file=stderr)
                 exit(22)
             if i18pfx:
-                bookpfx = i18pfx
+                bookpfx = modname + "." + i18pfx
                 i18n = True
             else: bookpfx = None
             basepath = "data/" + modname + "/patchouli_books/" + bookid + "/" + lang
@@ -108,7 +108,7 @@ with resolve_file(1, "r", stdin) as fin:
         if matcher:
             if entry_data:
                 dump_entry(entry, entry_data)
-            name, important, gate, icon, langname = matcher.groups()
+            name, important, gate, turnin, icon, langname = matcher.groups()
             if not section:
                 print("E: Found entry {} before a section".format(name), file=stderr)
                 exit(44)
@@ -121,6 +121,7 @@ with resolve_file(1, "r", stdin) as fin:
             }
             if important: entry_data["priority"] = True
             if gate: entry_data["advancement"] = modpfx + "main/" + icon
+            if turnin: entry_data["turnin"] = modpfx + "main/" + icon
             entry_data["pages"] = []
             pageidx = 0
             continue
@@ -143,5 +144,6 @@ with resolve_file(1, "r", stdin) as fin:
             exit(66)
     if entry_data:
         dump_entry(entry, entry_data)
-with resolve_file(3, "w", stdout) as out:
-    dump_json(lang_file, out, indent=2)
+if i18n:
+    with resolve_file(3, "w", stdout) as out:
+        dump_json(lang_file, out, indent=2)

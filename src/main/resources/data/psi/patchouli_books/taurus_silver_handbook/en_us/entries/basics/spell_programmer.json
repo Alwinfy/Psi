@@ -1,7 +1,7 @@
 {
   "name": "psi.book.entry.spellProgrammer",
   "category": "basics",
-  "icon": "minecraft:air",
+  "icon": "psi:programmer",
   "pages": [
     {
       "type": "text",
