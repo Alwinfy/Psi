@@ -1,11 +1,13 @@
 setl spell spelllang=en
 syn match patchiMacro '\$([^)]*)' contains=@NoSpell
 syn region patchiItem start='\$(\(item\|thing\))' end='\$(0)' contains=patchiMacro keepend
-syn region patchiEmph start='\$([k-o])' end='\$()' contains=patchiMacro keepend
+syn region patchiEmph start='\$([k-n])' end='\$()' contains=patchiMacro keepend
+syn region patchiItal start='\$(o)' end='\$()' contains=patchiMacro keepend
 hi def link patchiMacro Special
 hi def link patchiItem Identifier
 hi patchiEmph cterm=bold gui=bold
-"vnoremap \l <Esc>`>a$(/l)<Esc>`<i$(l:)<left>
+hi patchiItal cterm=italic gui=italic
+vnoremap <C-l> <Esc>`>a$(/l)<Esc>`<i$(l:)<left>
 vnoremap <C-e> <Esc>m``>a$(0)<Esc>`<i$(item)<Esc>``7l
 inoremap <C-e> $(item)$(0)<Left><C-o>3h
 vnoremap <C-t> <Esc>m``>a$(0)<Esc>`<i$(thing)<Esc>``8l

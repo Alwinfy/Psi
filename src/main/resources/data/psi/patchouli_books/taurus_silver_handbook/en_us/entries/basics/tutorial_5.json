@@ -14,7 +14,7 @@
       "images": [
         "psi:textures/gui/entries/tutorial_5_stats.png"
       ],
-      "border": false
+      "border": true
     },
     {
       "type": "text",
@@ -39,6 +39,10 @@
     {
       "type": "text",
       "text": "psi.book.page.tutorial5.7"
+    },
+    {
+      "type": "text",
+      "text": "psi.book.page.tutorial5.8"
     }
   ]
 }
