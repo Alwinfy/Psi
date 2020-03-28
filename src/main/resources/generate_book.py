@@ -30,15 +30,17 @@ if fin:
 
 camelcased = lambda snakecase: sub("_([a-z])", lambda match: match.group(1).upper(), sub("_([0-9])", r"\1", snakecase))
 
-book_pat = re_compile(r"@BOOK\s*\((\w+)\)(?: i18n:(\S+))?(?: icon:(\w+))? ([^;]*)(?:;\s*(.*))?")
-section_pat = re_compile(r"##(\w+) icon:(\w+) ([^;]*)(?:;\s*(.*))?")
-entry_pat = re_compile(r"#(\w+)(\+?)(?: gate:(\w+))?(?: turnin:(\w+))?(?: icon:(\w+))? (.*)")
+book_pat = re_compile(r"@BOOK\s*\((\w+)\)((?: MAP\{[^-]+->[^]]*\})+)(?: i18n:(\S+))?(?: icon:(\S+))? ([^;]*)(?:;\s*(.*))?")
+section_pat = re_compile(r"##(\w+) icon:(\S+) ([^;]*)(?:;\s*(.*))?")
+entry_pat = re_compile(r"#(\w+)(\+?)(?: gate:(\w+))?(?: turnin:(\w+))?(?: icon:(\S+))? (.*)")
+anchor_pat = re_compile(r"#!(\w+)\s+(.*)")
 page_patterns = [
-    ("crafting", re_compile(r"@RECIPE\s*\((\w+)\)(?:: (.*))?"),     lambda match: (match.group(2), {"recipe": modpfx + match.group(1)})),
-    ("spellpiece", re_compile(r"@PIECE\s*\((\w+)\)(?:: (.*))?"),     lambda match: (match.group(2), {"recipe": modpfx + "assets/textures/spell/{}.png".format(match.group(1))})),
-    ("image",    re_compile(r"@IMAGE\s*(B)?\(([\w,]+)\)(?:: (.*))?"),   lambda match: (match.group(3), {"images": [modpfx + imagepath.format(fn) for fn in match.group(2).split(",")], "border": bool(match.group(1))})),
-    ("link",    re_compile(r"@URL\s*\(([^)]+)\)\s*([^:]+)\s*(?:: (.*))?"),   lambda match: (match.group(3), {"url": match.group(1), "link_text": match.group(2)})),
-    ("text",     re_compile(".*"),                                  lambda match: (match.group(0), {}))
+    ("crafting",             re_compile(r"@RECIPE\s*\((\w+)\)(?:: (.*))?"),             lambda match: (match.group(2), {"recipe": modpfx + match.group(1)})),
+    ("spotlight",            re_compile(r"@ITEM\s*\((\w+)(\+)?\)(?:: (.*))?"),          lambda match: (match.group(3), {"item": modpfx + "{}".format(match.group(1)), "link_recipe": bool(match.group(2))})),
+    ("spellpiece_spotlight", re_compile(r"@PIECE\s*\((\w+)\)(?:: (.*))?"),              lambda match: (match.group(2), {"title": modname + ".spellpiece." + match.group(1), "spellpiece": modpfx + "{}".format(match.group(1))})),
+    ("image",                re_compile(r"@IMAGE\s*(B)?\(([\w,]+)\)(?:: (.*))?"),       lambda match: (match.group(3), {"images": [modpfx + imagepath.format(fn) for fn in match.group(2).split(",")], "border": bool(match.group(1))})),
+    ("link",                 re_compile(r"@URL\s*\(([^)]+)\)\s*([^:]+)\s*(?:: (.*))?"), lambda match: (match.group(3), {"url": match.group(1), "link_text": match.group(2)})),
+    ("text",                 re_compile(".*"),                          lambda match: (match.group(0), {}))
 ]
 
 def langput(langkey, value):
@@ -70,7 +72,7 @@ with resolve_file(1, "r", stdin) as fin:
             continue
         matcher = book_pat.fullmatch(line)
         if matcher:
-            bookid, i18pfx, icon, langname, langdesc = matcher.groups()
+            bookid, mapstr, i18pfx, icon, langname, langdesc = matcher.groups()
             if not modname:
                 print("E: Found book {} before a modname".format(bookid), file=stderr)
                 exit(22)
@@ -85,6 +87,13 @@ with resolve_file(1, "r", stdin) as fin:
                 "landing_text": langput("landing_text", langdesc) if langdesc else langput("name", langname),
                 "i18n": bool(i18pfx)
             }
+            if mapstr:
+                maps = mapstr[5:-1].split("] MAP[")
+                mdata = {}
+                for mp in maps:
+                    k, v = mp.split("->", maxsplit=1)
+                    mdata[k] = v
+                book_json["macros"] = mdata
             if icon: book_json[icon] = modpfx + icon
             with open(basepath + "/../book.json", "w") as book_file:
                 dump_json(book_json, book_file, indent=2)
@@ -130,6 +139,10 @@ with resolve_file(1, "r", stdin) as fin:
         if not entry:
             print("E: Found pageline before an entry:", line, file=stderr)
             exit(55)
+        anchor = None
+        matcher = anchor_pat.fullmatch(line)
+        if matcher:
+            anchor, line = matcher.groups()
         for page, regex, cb in page_patterns:
             matcher = regex.fullmatch(line)
             if matcher:
@@ -139,6 +152,7 @@ with resolve_file(1, "r", stdin) as fin:
                     base["text"] = langput("page." + entry_key + "." + str(pageidx), line)
                     pageidx += 1
                 base.update(add)
+                if anchor: base["anchor"] = anchor
                 entry_data["pages"].append(base)
                 break
         else:

@@ -18,15 +18,18 @@
     },
     {
       "type": "text",
-      "text": "psi.book.page.tutorial5.2"
+      "text": "psi.book.page.tutorial5.2",
+      "anchor": "complexity"
     },
     {
       "type": "text",
-      "text": "psi.book.page.tutorial5.3"
+      "text": "psi.book.page.tutorial5.3",
+      "anchor": "potency"
     },
     {
       "type": "text",
-      "text": "psi.book.page.tutorial5.4"
+      "text": "psi.book.page.tutorial5.4",
+      "anchor": "cost"
     },
     {
       "type": "text",
@@ -34,11 +37,13 @@
     },
     {
       "type": "text",
-      "text": "psi.book.page.tutorial5.6"
+      "text": "psi.book.page.tutorial5.6",
+      "anchor": "projection"
     },
     {
       "type": "text",
-      "text": "psi.book.page.tutorial5.7"
+      "text": "psi.book.page.tutorial5.7",
+      "anchor": "bandwidth"
     },
     {
       "type": "text",

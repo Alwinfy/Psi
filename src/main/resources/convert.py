@@ -1,8 +1,9 @@
 #!/usr/bin/python3
 
-from sys    import argv, stderr, stdout
-from json   import load as load_json
-from re     import sub, match, compile as re_compile
+from sys         import argv, stderr, stdout
+from json        import load as load_json
+from re          import sub, search, compile as re_compile
+from collections import defaultdict
 
 if len(argv) < 2:
     print("Usage: {} <mappings file> [<output file> [<error file]]".format(argv[0]))
@@ -15,10 +16,9 @@ def resolve_file(index, mode, default=None):
 
 with resolve_file(1, "r") as fin:
     data = load_json(fin)
-unknowns = set() # so they're buffered all after stdout
-errors = []
+unknowns = defaultdict(lambda: set()) # so they're buffered all after stdout
 
-item_pattern = re_compile(r"(?<!\))\$\(item\)([^$]+)\$\([0r]\)(?!\$)")
+item_pattern = re_compile(r"(?<!\))\$\((\w+)\)([^$]+)\$\([0r]\)(?!\$)")
 
 entry_pat = re_compile(r"#(\w+)(\+?)(?: from:(\w+))?(?: icon:(\w+))? (.*)")
 
@@ -34,20 +34,24 @@ with open(data["file"], "r") as fin, \
             suffix = matcher.group(1)
         def item_cb(matcher):
             whole = matcher.group(0)
-            phrase = matcher.group(1)
-            if phrase in data["ignore"]: return whole
-            if phrase not in data["names"]:
-                unknowns.add('    "{}",'.format(phrase))
+            key = matcher.group(1)
+            phrase = matcher.group(2)
+            if key not in data: return whole
+            if phrase in data[key]["ignore"]: return whole
+            if phrase not in data[key]["names"]:
+                unknowns[key].add('\t\t\t"{}",'.format(phrase))
                 return whole
-            if match("/{}(#|\))".format(suffix), data["names"][phrase]):
+            if search(r"/{}(#|$)".format(suffix), data[key]["names"][phrase]):
                 return whole
-            return "$(l:{})$(item){}$(0)$(/l)".format(data["names"][phrase], phrase)
+            return "$(l:{})$(item){}$(0)$(/l)".format(data[key]["names"][phrase], phrase)
         print(sub(item_pattern, item_cb, line), file=out)
 with resolve_file(3, "w", stderr) as err:
-    if unknowns:
+    if len(unknowns):
         print("===UNKNOWN ITEMS:===", file=err)
-        for warn in sorted(unknowns):
-            print(warn, file=err)
+        for key in unknowns.keys():
+            print("-> $({}):".format(key), file=err)
+            for warn in sorted(unknowns[key]):
+                print(warn, file=err)
     if errors:
         print("===ERRORS:===", file=err)
         for bad in sorted(errors):

@@ -1,32 +1,109 @@
 {
-	"names": {
-		"CAD Assembler": "basics/cad_assembler",
-		"Programmer": "basics/spell_programmer",
-		"Spell Programmer": "basics/spell_programmer",
-
-		"Psidust": "components/psidust",
-		"Psimetal": "components/psimetal",
-		"Psigem": "components/psigem",
-		"Psigems": "components/psigem",
-		"Assembly": "components/assembly",
-		"CAD Assemblies": "components/assembly",
-		"Iron CAD Assembly": "components/assembly#iron",
-		"Core": "components/core",
-		"CAD Core": "components/core",
-		"Socket": "components/socket",
-		"Battery": "components/battery",
-		"Colorizer": "components/colorizer",
-
-		"Spell Bullet": "items/spell_bullet",
-		"Spell Bullets": "items/spell_bullet",
-		"Psimetal Tools": "items/psi_tools",
-		"__END": null
+	"piece": {
+		"names": {
+			"__END": null
+		},
+		"ignore": [
+			"text",
+			"__END"
+		]
 	},
-	"ignore": [
-		"Redstone Dust",
-		"this color",
-		"__END"
-	],
+	"thing": {
+		"names": {
+			"Complexity": "basics/tutorial_5#complexity",
+			"Potency": "basics/tutorial_5#potency",
+			"Cost": "basics/tutorial_5#cost",
+			"Efficiency": "basics/tutorial_5#cost",
+			"Projection": "basics/tutorial_5#projection",
+			"Bandwidth": "basics/tutorial_5#bandwidth",
+			"__END": null
+		},
+		"ignore": [
+			"CAD",
+			"CADs",
+			"Constant",
+			"Casting Assistant Device",
+			"End",
+			"Focal Point",
+			"Minecraft",
+			"Operator",
+			"Operators",
+			"Overworld",
+			"Psi energy",
+			"Psi master keybind",
+			"Psi",
+			"Selector",
+			"Selectors",
+			"Spell Piece",
+			"Spell Pieces",
+			"Spell",
+			"Spells",
+			"Trick",
+			"Tricks",
+			"__END"
+		]
+	},
+	"item": {
+		"names": {
+			"CAD Assembler": "basics/cad_assembler",
+			"Programmer": "basics/spell_programmer",
+			"Spell Programmer": "basics/spell_programmer",
+
+
+			"Psidust": "components/psidust",
+			"Psimetal": "components/psimetal",
+			"Psimetal Ingots": "components/psimetal",
+			"Psigem": "components/psigem",
+			"Psigems": "components/psigem",
+			"Ivory Ingots": "components/ebony_ivory",
+			"Ebony & Ivory Ingots": "components/ebony_ivory",
+			"Ebony Psimetal": "components/ebony_ivory",
+			"Ebony Substance": "components/ebony_ivory",
+			"Ivory Psimetal": "components/ebony_ivory",
+			"Ivory Substance": "components/ebony_ivory",
+
+			"Assembly": "components/assembly",
+			"CAD Assemblies": "components/assembly",
+			"CAD Assembly": "components/assembly",
+			"Iron CAD Assembly": "components/assembly#iron",
+			"Gold CAD Assembly": "components/assembly#gold",
+			"Psimetal CAD Assembly": "components/assembly#psimetal",
+			"Ebony Psimetal CAD Assembly": "components/assembly#ebony",
+			"Ivory Psimetal CAD Assembly": "components/assembly#ivory",
+			"Core": "components/core",
+			"CAD Core": "components/core",
+			"CAD Cores": "components/core",
+			"Basic CAD Core": "components/core#basic",
+			"Socket": "components/socket",
+			"Sockets": "components/socket",
+			"CAD Socket": "components/socket",
+			"Basic CAD Socket": "components/socket#basic",
+			"Battery": "components/battery",
+			"Batteries": "components/battery",
+			"Colorizer": "components/colorizer",
+			"CAD Colorizers": "components/colorizer",
+
+
+			"Spell Bullet": "items/spell_bullet",
+			"Spell Bullets": "items/spell_bullet",
+			"Psimetal Tools": "items/tools",
+			"Armor": "items/armor",
+			"__END": null
+		},
+		"ignore": [
+			"Redstone Dust",
+			"Gold Ingots",
+			"Diamond",
+			"Diamonds",
+			"Ebony",
+			"Ivory",
+			"Ivory Psimetal Ingots",
+			"Coal",
+			"Nether Quartz",
+			"colored",
+			"__END"
+		]
+	},
 	"file": "rewrite.txt"
 }
 
