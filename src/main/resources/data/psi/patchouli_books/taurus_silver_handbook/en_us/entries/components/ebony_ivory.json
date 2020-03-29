@@ -2,6 +2,7 @@
   "name": "psi.book.entry.ebonyIvory",
   "category": "components",
   "icon": "psi:ivory_substance",
+  "priority": true,
   "pages": [
     {
       "type": "text",

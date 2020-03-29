@@ -1,7 +1,7 @@
 {
   "name": "psi.book.entry.vectorPrimer",
   "category": "basics",
-  "icon": "psi:vector_ruler",
+  "icon": "psi:textures/spell/operator_vector_construct.png",
   "pages": [
     {
       "type": "link",

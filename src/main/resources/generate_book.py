@@ -54,112 +54,113 @@ def dump_entry(entry_path, entry_data):
     with open("{}/entries/{}.json".format(basepath, entry_path), "w") as entry_file:
         dump_json(entry_data, entry_file, indent=2)
 
-with resolve_file(1, "r", stdin) as fin:
-    section = None
-    secnum = 0
-    entry = None
-    entry_key = None
-    entry_data = None
-    for line in fin:
-        line = line[:-1] # strip newline
-        if not line.strip() or line.strip().startswith("//"):
-            continue
-        if line == "__END__":
-            break
-        if line.strip().startswith("@MOD "):
-            modname = line.strip()[5:].strip()
-            modpfx = modname + ":"
-            continue
-        matcher = book_pat.fullmatch(line)
-        if matcher:
-            bookid, mapstr, i18pfx, icon, langname, langdesc = matcher.groups()
-            if not modname:
-                print("E: Found book {} before a modname".format(bookid), file=stderr)
-                exit(22)
-            if i18pfx:
-                bookpfx = modname + "." + i18pfx
-                i18n = True
-            else: bookpfx = None
-            basepath = "data/" + modname + "/patchouli_books/" + bookid + "/" + lang
-            makedirs(basepath + "/categories", exist_ok=True)
-            book_json = {
-                "name": langput("name", langname),
-                "landing_text": langput("landing_text", langdesc) if langdesc else langput("name", langname),
-                "i18n": bool(i18pfx)
-            }
-            if mapstr:
-                maps = mapstr[5:-1].split("] MAP[")
-                mdata = {}
-                for mp in maps:
-                    k, v = mp.split("->", maxsplit=1)
-                    mdata[k] = v
-                book_json["macros"] = mdata
-            if icon: book_json[icon] = modpfx + icon
-            with open(basepath + "/../book.json", "w") as book_file:
-                dump_json(book_json, book_file, indent=2)
-            continue
-        matcher = section_pat.fullmatch(line)
-        if matcher:
-            section, icon, langname, langdesc = matcher.groups()
-            if not bookid:
-                print("E: Found section {} before a book".format(section), file=stderr)
-                exit(33)
-            langkey = "category." + camelcased(section)
-            makedirs(basepath + "/entries/" + section, exist_ok=True)
-            with open("{}/categories/{}.json".format(basepath, section), "w") as category_file:
-                dump_json({
-                    "name": langput(langkey, langname),
-                    "description": langput(langkey + ".desc", langdesc) if langdesc else langput(langkey, langname),
-                    "icon": modpfx + icon,
-                    "sortnum": secnum
-                }, category_file, indent=2)
-            secnum += 1
-            continue
-        matcher = entry_pat.fullmatch(line)
-        if matcher:
-            if entry_data:
-                dump_entry(entry, entry_data)
-            name, important, gate, turnin, icon, langname = matcher.groups()
-            if not section:
-                print("E: Found entry {} before a section".format(name), file=stderr)
-                exit(44)
-            entry = section + "/" + name
-            entry_key = camelcased(name)
-            entry_data = {
-                "name": langput("entry." + entry_key, langname),
-                "category": section,
-                "icon": (modpfx + icon) if icon else "minecraft:air"
-            }
-            if important: entry_data["priority"] = True
-            if gate: entry_data["advancement"] = modpfx + "main/" + icon
-            if turnin: entry_data["turnin"] = modpfx + "main/" + icon
-            entry_data["pages"] = []
-            pageidx = 0
-            continue
-        if not entry:
-            print("E: Found pageline before an entry:", line, file=stderr)
-            exit(55)
-        anchor = None
-        matcher = anchor_pat.fullmatch(line)
-        if matcher:
-            anchor, line = matcher.groups()
-        for page, regex, cb in page_patterns:
-            matcher = regex.fullmatch(line)
-            if matcher:
-                base = {"type": page}
-                line, add = cb(matcher)
-                if line:
-                    base["text"] = langput("page." + entry_key + "." + str(pageidx), line)
-                    pageidx += 1
-                base.update(add)
-                if anchor: base["anchor"] = anchor
-                entry_data["pages"].append(base)
+if __name__ == "__main__":
+    with resolve_file(1, "r", stdin) as fin:
+        section = None
+        secnum = 0
+        entry = None
+        entry_key = None
+        entry_data = None
+        for line in fin:
+            line = line[:-1] # strip newline
+            if not line.strip() or line.strip().startswith("//"):
+                continue
+            if line == "__END__":
                 break
-        else:
-            print("E: Unknown page type for line:", line, file=stderr)
-            exit(66)
-    if entry_data:
-        dump_entry(entry, entry_data)
-if i18n:
-    with resolve_file(3, "w", stdout) as out:
-        dump_json(lang_file, out, indent=2)
+            if line.strip().startswith("@MOD "):
+                modname = line.strip()[5:].strip()
+                modpfx = modname + ":"
+                continue
+            matcher = book_pat.fullmatch(line)
+            if matcher:
+                bookid, mapstr, i18pfx, icon, langname, langdesc = matcher.groups()
+                if not modname:
+                    print("E: Found book {} before a modname".format(bookid), file=stderr)
+                    exit(22)
+                if i18pfx:
+                    bookpfx = modname + "." + i18pfx
+                    i18n = True
+                else: bookpfx = None
+                basepath = "data/" + modname + "/patchouli_books/" + bookid + "/" + lang
+                makedirs(basepath + "/categories", exist_ok=True)
+                book_json = {
+                    "name": langput("name", langname),
+                    "landing_text": langput("landing_text", langdesc) if langdesc else langput("name", langname),
+                    "i18n": bool(i18pfx)
+                }
+                if mapstr:
+                    maps = mapstr[5:-1].split("] MAP[")
+                    mdata = {}
+                    for mp in maps:
+                        k, v = mp.split("->", maxsplit=1)
+                        mdata[k] = v
+                    book_json["macros"] = mdata
+                if icon: book_json[icon] = modpfx + icon
+                with open(basepath + "/../book.json", "w") as book_file:
+                    dump_json(book_json, book_file, indent=2)
+                continue
+            matcher = section_pat.fullmatch(line)
+            if matcher:
+                section, icon, langname, langdesc = matcher.groups()
+                if not bookid:
+                    print("E: Found section {} before a book".format(section), file=stderr)
+                    exit(33)
+                langkey = "category." + camelcased(section)
+                makedirs(basepath + "/entries/" + section, exist_ok=True)
+                with open("{}/categories/{}.json".format(basepath, section), "w") as category_file:
+                    dump_json({
+                        "name": langput(langkey, langname),
+                        "description": langput(langkey + ".desc", langdesc) if langdesc else langput(langkey, langname),
+                        "icon": modpfx + icon,
+                        "sortnum": secnum
+                    }, category_file, indent=2)
+                secnum += 1
+                continue
+            matcher = entry_pat.fullmatch(line)
+            if matcher:
+                if entry_data:
+                    dump_entry(entry, entry_data)
+                name, important, gate, turnin, icon, langname = matcher.groups()
+                if not section:
+                    print("E: Found entry {} before a section".format(name), file=stderr)
+                    exit(44)
+                entry = section + "/" + name
+                entry_key = camelcased(name)
+                entry_data = {
+                    "name": langput("entry." + entry_key, langname),
+                    "category": section,
+                    "icon": (modpfx + icon) if icon else "minecraft:air"
+                }
+                if important: entry_data["priority"] = True
+                if gate: entry_data["advancement"] = modpfx + "main/" + icon
+                if turnin: entry_data["turnin"] = modpfx + "main/" + icon
+                entry_data["pages"] = []
+                pageidx = 0
+                continue
+            if not entry:
+                print("E: Found pageline before an entry:", line, file=stderr)
+                exit(55)
+            anchor = None
+            matcher = anchor_pat.fullmatch(line)
+            if matcher:
+                anchor, line = matcher.groups()
+            for page, regex, cb in page_patterns:
+                matcher = regex.fullmatch(line)
+                if matcher:
+                    base = {"type": page}
+                    line, add = cb(matcher)
+                    if line:
+                        base["text"] = langput("page." + entry_key + "." + str(pageidx), line)
+                        pageidx += 1
+                    base.update(add)
+                    if anchor: base["anchor"] = anchor
+                    entry_data["pages"].append(base)
+                    break
+            else:
+                print("E: Unknown page type for line:", line, file=stderr)
+                exit(66)
+        if entry_data:
+            dump_entry(entry, entry_data)
+    if i18n:
+        with resolve_file(3, "w", stdout) as out:
+            dump_json(lang_file, out, indent=2)
