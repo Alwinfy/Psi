@@ -16,9 +16,9 @@
       "text": "psi.book.page.colorizer.2"
     },
     {
-      "type": "crafting",
+      "type": "crafting_multi",
       "text": "psi.book.page.colorizer.3",
-      "recipe": "psi:cad_colorizer_rainbow"
+      "recipes": "psi:colorizer"
     }
   ]
 }
