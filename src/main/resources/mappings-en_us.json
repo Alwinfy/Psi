@@ -33,15 +33,22 @@
 			"Colorizers": "components/colorizer",
 			"CAD Colorizer": "components/colorizer",
 			"CAD Colorizers": "components/colorizer",
+
+			"Bullet": "items/spell_bullet",
+			"Bullets": "items/spell_bullet",
+			"Spell Bullet": "items/spell_bullet",
+			"Spell Bullets": "items/spell_bullet",
+			"Focal Point": "items/spell_bullet#focal_point",
+			"Focal Points": "items/spell_bullet#focal_point",
 			"__END": null
 		},
 		"ignore": [
 			"CAD",
+			"Cost Multiplier",
 			"CADs",
 			"Constant",
 			"Casting Assistant Device",
 			"End",
-			"Focal Point",
 			"Glass",
 			"Minecraft",
 			"Operator",
@@ -86,21 +93,28 @@
 			"Psimetal CAD Assembly": "components/assembly#psimetal",
 			"Ebony Psimetal CAD Assembly": "components/assembly#ebony",
 			"Ivory Psimetal CAD Assembly": "components/assembly#ivory",
+
 			"Basic CAD Core": "components/core#basic",
 			"Overclocked CAD Core": "components/core#overclocked",
 			"Conductive CAD Core": "components/core#conductive",
 			"Hyperclocked CAD Core": "components/core#hyperclocked",
 			"Radiative CAD Core": "components/core#radiative",
+
 			"Basic CAD Socket": "components/socket#basic",
 			"Signaling CAD Socket": "components/socket#signaling",
 			"Large CAD Socket": "components/socket#large",
 			"Transmissive CAD Socket": "components/socket#transmissive",
 			"Huge CAD Socket": "components/socket#huge",
 
+			"Spell Bullet": "items/basic_bullet",
+			"Projectile Spell Bullet": "items/projectile_bullet",
+			"Loopcast Spell Bullet": "items/loopcast_bullet",
+			"Circle Spell Bullet": "items/circle_bullet",
+			"Grenade Spell Bullet": "items/grenade_bullet",
+			"Charge Spell Bullet": "items/charge_bullet",
+			"Mine Spell Bullet": "items/mine_bullet",
 
-			"Bullets": "items/spell_bullet",
-			"Spell Bullet": "items/spell_bullet",
-			"Spell Bullets": "items/spell_bullet",
+			"Spell Drive": "items/spell_drive",
 			"Psimetal Tools": "items/tools",
 			"Armor": "items/armor",
 			"__END": null
@@ -128,4 +142,3 @@
 	},
 	"file": "rewrite.txt"
 }
-

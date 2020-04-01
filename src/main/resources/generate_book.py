@@ -30,17 +30,18 @@ if fin:
 
 camelcased = lambda snakecase: sub("_([a-z])", lambda match: match.group(1).upper(), sub("_([0-9])", r"\1", snakecase))
 
-book_pat = re_compile(r"@BOOK\s*\((\w+)\)((?: MAP\{[^-]+->[^]]*\})+)(?: i18n:(\S+))?(?: icon:(\S+))? ([^;]*)(?:;\s*(.*))?")
+book_pat = re_compile(r"@BOOK\s*\((\w+)\)(-)?((?: MAP\{[^-]+->[^]]*\})+)(?: i18n:(\S+))?(?: icon:(\S+))? ([^;]*)(?:;\s*(.*))?")
 section_pat = re_compile(r"##(\w+) icon:(\S+) ([^;]*)(?:;\s*(.*))?")
 entry_pat = re_compile(r"#(\w+)(\+?)(?: gate:(\w+))?(?: turnin:(\w+))?(?: icon:(\S+))? (.*)")
 anchor_pat = re_compile(r"#!(\w+)\s+(.*)")
 page_patterns = [
-    ("crafting",             re_compile(r"@RECIPE\s*\((\w+)\)(?:: (.*))?"),             lambda match: (match.group(2), {"recipe": modpfx + match.group(1)})),
-    ("crafting_multi",       re_compile(r"@RECIPES\s*\((\w+)\)(?:: (.*))?"),            lambda match: (match.group(2), {"recipes": modpfx + match.group(1)})),
-    ("spotlight",            re_compile(r"@ITEM\s*\((\w+)(\+)?\)(?:: (.*))?"),          lambda match: (match.group(3), {"item": modpfx + "{}".format(match.group(1)), "link_recipe": bool(match.group(2))})),
-    ("spellpiece_spotlight", re_compile(r"@PIECE\s*\((\w+)\)(?:: (.*))?"),              lambda match: (match.group(2), {"title": modname + ".spellpiece." + match.group(1), "spellpiece": modpfx + "{}".format(match.group(1))})),
-    ("image",                re_compile(r"@IMAGE\s*(B)?\(([\w,]+)\)(?:: (.*))?"),       lambda match: (match.group(3), {"images": [modpfx + imagepath.format(fn) for fn in match.group(2).split(",")], "border": bool(match.group(1))})),
-    ("link",                 re_compile(r"@URL\s*\(([^)]+)\)\s*([^:]+)\s*(?:: (.*))?"), lambda match: (match.group(3), {"url": match.group(1), "link_text": match.group(2)})),
+    ("crafting",             re_compile(r"@RECIPE\s*\((\w+)\)(?:: (.*))?"),                 lambda match: (match.group(2), {"recipe": modpfx + match.group(1)})),
+    ("crafting_multi",       re_compile(r"@RECIPES\s*\((\w*):([\w;]+)\)(?:: (.*))?"),       lambda match: (match.group(3), {"recipes": ";".join(modpfx + match.group(1) + rec for rec in match.group(2).split(";"))})),
+    ("spotlight",            re_compile(r"@ITEM\s*\((\w+)(\+)?\)(?:: (.*))?"),              lambda match: (match.group(3), {"item": modpfx + "{}".format(match.group(1)), "link_recipe": bool(match.group(2))})),
+    ("spellpiece_spotlight", re_compile(r"@PIECE\s*\((\w+)\)(?:: (.*))?"),                  lambda match: (match.group(2), {"title": modname + ".spellpiece." + match.group(1), "spellpiece": modpfx + "{}".format(match.group(1))})),
+    ("image",                re_compile(r"@IMAGE\s*(B)?\(([\w,]+)\)(?:: (.*))?"),           lambda match: (match.group(3), {"images": [modpfx + imagepath.format(fn) for fn in match.group(2).split(",")], "border": bool(match.group(1))})),
+    ("link",                 re_compile(r"@URL\s*\(([^)]+)\)\s*([^:]+)\s*(?:: (.*))?"),     lambda match: (match.group(3), {"url": match.group(1), "link_text": match.group(2)})),
+    ("relations",            re_compile(r"@LIST\s*\((?:([\w/]+):)?([\w,/#]+)\)\s*([^:]+)\s*(?:: (.*))?"), lambda match: (match.group(4), {"entries": [(match.group(1) or "") + it for it in match.group(2).split(",")], "title": match.group(3)})),
     ("text",                 re_compile(".*"),                          lambda match: (match.group(0), {}))
 ]
 
@@ -74,7 +75,7 @@ if __name__ == "__main__":
                 continue
             matcher = book_pat.fullmatch(line)
             if matcher:
-                bookid, mapstr, i18pfx, icon, langname, langdesc = matcher.groups()
+                bookid, prog, mapstr, i18pfx, icon, langname, langdesc = matcher.groups()
                 if not modname:
                     print("E: Found book {} before a modname".format(bookid), file=stderr)
                     exit(22)
@@ -87,8 +88,10 @@ if __name__ == "__main__":
                 book_json = {
                     "name": langput("name", langname),
                     "landing_text": langput("landing_text", langdesc) if langdesc else langput("name", langname),
-                    "i18n": bool(i18pfx)
+                    "i18n": bool(i18pfx),
+                    "show_progress": not prog
                 }
+                if icon: book_json["model"] = modpfx + icon
                 if mapstr:
                     maps = mapstr[5:-1].split("] MAP[")
                     mdata = {}
@@ -96,7 +99,6 @@ if __name__ == "__main__":
                         k, v = mp.split("->", maxsplit=1)
                         mdata[k] = v
                     book_json["macros"] = mdata
-                if icon: book_json[icon] = modpfx + icon
                 with open(basepath + "/../book.json", "w") as book_file:
                     dump_json(book_json, book_file, indent=2)
                 continue

@@ -1,0 +1,11 @@
+{
+  "name": "psi.book.entry.circleBullet",
+  "category": "items",
+  "icon": "psi:spell_bullet_circle",
+  "pages": [
+    {
+      "type": "text",
+      "text": "psi.book.page.circleBullet.0"
+    }
+  ]
+}

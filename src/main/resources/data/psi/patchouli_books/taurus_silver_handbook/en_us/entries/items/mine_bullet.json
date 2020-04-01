@@ -1,0 +1,12 @@
+{
+  "name": "psi.book.entry.mineBullet",
+  "category": "items",
+  "icon": "psi:spell_bullet_mine",
+  "pages": [
+    {
+      "type": "crafting",
+      "text": "psi.book.page.mineBullet.0",
+      "recipe": "psi:spell_bullet_mine"
+    }
+  ]
+}

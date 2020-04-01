@@ -4,9 +4,7 @@
   "i18n": true,
   "show_progress": false,
   "model": "psi:taurus_silver_codex",
-  "i18n": true,
   "macros": {
     "$(piece)": "$(3)"
-  },
-  "tablet": "psi:tablet"
+  }
 }
