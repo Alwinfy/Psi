@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 from sys    import argv, stdin, stderr, stdout
-from json   import dump as dump_json, load as load_json
+from json   import dump as dump_json, load as load_json, loads
 from re     import sub, compile as re_compile
 from os     import makedirs, environ
 
@@ -30,10 +30,10 @@ if fin:
 
 camelcased = lambda snakecase: sub("_([a-z])", lambda match: match.group(1).upper(), sub("_([0-9])", r"\1", snakecase))
 
-book_pat = re_compile(r"@BOOK\s*\((\w+)\)(-)?((?: MAP\{[^-]+->[^]]*\})+)(?: i18n:(\S+))?(?: icon:(\S+))? ([^;]*)(?:;\s*(.*))?")
+book_pat = re_compile(r"@BOOK\s*\((\w+)\)(?: DATA@@({[^@]+})@@)?((?: MAP\{[^-]+->[^]]*\})+)(?: i18n:(\S+))?(?: icon:(\S+))? ([^;]*)(?:;\s*(.*))?")
 section_pat = re_compile(r"##(\w+) icon:(\S+) ([^;]*)(?:;\s*(.*))?")
 entry_pat = re_compile(r"#(\w+)(\+?)(?: gate:(\w+))?(?: turnin:(\w+))?(?: icon:(\S+))? (.*)")
-anchor_pat = re_compile(r"#!(\w+)\s+(.*)")
+anchor_pat = re_compile(r"#!(\w+)\s*(?:\(([^)]+)\))?\s+(.*)")
 page_patterns = [
     ("crafting",             re_compile(r"@RECIPE\s*\((\w+)\)(?:: (.*))?"),                 lambda match: (match.group(2), {"recipe": modpfx + match.group(1)})),
     ("crafting_multi",       re_compile(r"@RECIPES\s*\((\w*):([\w;]+)\)(?:: (.*))?"),       lambda match: (match.group(3), {"recipes": ";".join(modpfx + match.group(1) + rec for rec in match.group(2).split(";"))})),
@@ -75,7 +75,7 @@ if __name__ == "__main__":
                 continue
             matcher = book_pat.fullmatch(line)
             if matcher:
-                bookid, prog, mapstr, i18pfx, icon, langname, langdesc = matcher.groups()
+                bookid, extradata, mapstr, i18pfx, icon, langname, langdesc = matcher.groups()
                 if not modname:
                     print("E: Found book {} before a modname".format(bookid), file=stderr)
                     exit(22)
@@ -89,8 +89,8 @@ if __name__ == "__main__":
                     "name": langput("name", langname),
                     "landing_text": langput("landing_text", langdesc) if langdesc else langput("name", langname),
                     "i18n": bool(i18pfx),
-                    "show_progress": not prog
                 }
+                if extradata: book_json.update(loads(extradata))
                 if icon: book_json["model"] = modpfx + icon
                 if mapstr:
                     maps = mapstr[5:-1].split("] MAP[")
@@ -144,14 +144,16 @@ if __name__ == "__main__":
                 print("E: Found pageline before an entry:", line, file=stderr)
                 exit(55)
             anchor = None
+            title = None
             matcher = anchor_pat.fullmatch(line)
             if matcher:
-                anchor, line = matcher.groups()
+                anchor, title, line = matcher.groups()
             for page, regex, cb in page_patterns:
                 matcher = regex.fullmatch(line)
                 if matcher:
                     base = {"type": page}
                     line, add = cb(matcher)
+                    if title: base["title"] = langput("subsec." + entry_key + "." + str(pageidx), title)
                     if line:
                         base["text"] = langput("page." + entry_key + "." + str(pageidx), line)
                         pageidx += 1

@@ -44,12 +44,16 @@
     },
     {
       "type": "text",
-      "text": "psi.book.page.spellBullet.7",
+      "text": "psi.book.page.spellBullet.7"
+    },
+    {
+      "type": "text",
+      "text": "psi.book.page.spellBullet.8",
       "anchor": "focal_point"
     },
     {
       "type": "text",
-      "text": "psi.book.page.spellBullet.8"
+      "text": "psi.book.page.spellBullet.9"
     }
   ]
 }

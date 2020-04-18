@@ -19,6 +19,14 @@
     {
       "type": "text",
       "text": "psi.book.page.loopcastBullet.3"
+    },
+    {
+      "type": "text",
+      "text": "psi.book.page.loopcastBullet.4"
+    },
+    {
+      "type": "text",
+      "text": "psi.book.page.loopcastBullet.5"
     }
   ]
 }
